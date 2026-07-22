@@ -1,0 +1,55 @@
+{
+  "name": "Gestionale Magyc",
+  "short_name": "Magyc",
+  "description": "Gestionale completo per campionati fantasy, aste, rose, mercato, calendario e classifiche.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": [
+    "sports",
+    "productivity"
+  ],
+  "shortcuts": [
+    {
+      "name": "Aste",
+      "short_name": "Aste",
+      "url": "./?tab=auctions",
+      "icons": [
+        {
+          "src": "icon-180.png",
+          "sizes": "180x180",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Partite",
+      "short_name": "Partite",
+      "url": "./?tab=calendar",
+      "icons": [
+        {
+          "src": "icon-180.png",
+          "sizes": "180x180",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}

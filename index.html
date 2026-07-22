@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07111f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Magyc">
+  <title>Gestionale Magyc</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="toast" class="toast hidden"></div>
+
+  <header class="topbar">
+    <button id="brandBtn" class="brand" aria-label="Dashboard">
+      <img src="icon-180.png" alt="Logo Magyc">
+      <div><small>MAGYC PLATFORM</small><strong>Gestionale Magyc <small>1.0</small></strong></div>
+    </button>
+    <div class="top-actions">
+      <span id="userBadge" class="user-badge hidden"></span>
+      <button id="logoutBtn" class="secondary hidden">Esci</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="authView" class="auth-layout">
+      <article class="auth-card">
+        <img class="auth-logo" src="magyc-logo.png" alt="Magyc">
+        <div class="kicker">ACCESSO RISERVATO</div>
+        <h1>Organizza campionati, rose e aste in un solo posto.</h1>
+        <p>Accedi con un link ricevuto via email tramite un collegamento sicuro ricevuto via email.</p>
+        <form id="loginForm">
+          <label>Email
+            <input id="emailInput" type="email" autocomplete="email" placeholder="nome@email.it" required>
+          </label>
+          <button type="submit">Invia link di accesso</button>
+        </form>
+        <div id="connectionStatus" class="message">Verifica collegamento in corso…</div>
+<div class="onboarding-note">Primo accesso: inserisci la tua email e riceverai un link sicuro per entrare.</div>
+        <div id="authMsg" class="message"></div>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-grid">
+          <div><span>🏆</span><strong>Più campionati</strong><small>Attivi e archiviati</small></div>
+          <div><span>👥</span><strong>Ruoli distinti</strong><small>Proprietario, admin, allenatore</small></div>
+          <div><span>💰</span><strong>Aste a buste</strong><small>Offerte segrete e assegnazione</small></div>
+          <div><span>📱</span><strong>Ottimizzato iPhone</strong><small>Installabile dalla Home</small></div>
+        </div>
+      </article>
+    </section>
+
+    <section id="appView" class="hidden">
+      <div class="workspace-head">
+        <div>
+          <div class="kicker">AREA DI LAVORO</div>
+          <h1 id="workspaceTitle">Dashboard</h1>
+        </div>
+        <select id="leagueSelector" aria-label="Campionato"></select>
+      </div>
+
+      <nav class="tabs" aria-label="Sezioni">
+        <button data-tab="dashboard" class="active">Dashboard</button>
+        <button data-tab="teams">Squadre</button>
+        <button data-tab="auctions">Aste</button>
+        <button data-tab="calendar">Calendario</button>
+        <button data-tab="standings">Classifica</button>
+        <button data-tab="statistics">Statistiche</button>
+        <button data-tab="rosters">Rose</button>
+        <button data-tab="market">Mercato</button>
+        <button data-tab="documents">Documenti</button>
+        <button data-tab="members">Utenti</button>
+        <button data-tab="settings">Impostazioni</button>
+      </nav>
+
+      <section id="tab-dashboard" class="tab active">
+        <div class="hero-card">
+          <img class="dashboard-logo" src="magyc-logo.png" alt="Magyc">
+          <div>
+            <div class="kicker">PANORAMICA</div>
+            <h2 id="dashboardLeagueName">Gestionale Magyc</h2>
+            <p id="dashboardLeagueMeta" class="meta">Seleziona un campionato per iniziare.</p>
+          </div>
+          <div class="hero-actions">
+            <button id="quickAuctionBtn">Nuova asta</button>
+            <button id="quickResultBtn" class="secondary">Inserisci risultato</button>
+          </div>
+        </div>
+
+        <div class="stats-grid dashboard-stats">
+          <article class="stat"><span>Squadre</span><strong id="dashboardTeams">0</strong></article>
+          <article class="stat"><span>Giocatori</span><strong id="dashboardPlayers">0</strong></article>
+          <article class="stat"><span>Aste aperte</span><strong id="dashboardAuctions">0</strong></article>
+          <article class="stat"><span>Partite giocate</span><strong id="dashboardMatches">0</strong></article>
+        </div>
+
+        <div class="dashboard-grid">
+          <section class="panel">
+            <div class="section-head"><h3>Prossime partite</h3><button class="link-btn" data-go-tab="calendar">Apri calendario</button></div>
+            <div id="upcomingMatches"></div>
+          </section>
+          <section class="panel">
+            <div class="section-head"><h3>Classifica</h3><button class="link-btn" data-go-tab="standings">Vedi tutto</button></div>
+            <div id="dashboardStandings"></div>
+          </section>
+          <section class="panel">
+            <div class="section-head"><h3>Attività recenti</h3></div>
+            <div id="dashboardActivities"></div>
+          </section>
+          <section class="panel">
+            <div class="section-head"><h3>Bilanci squadre</h3></div>
+            <div id="dashboardCredits"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="tab-teams" class="tab">
+        <div class="section-head">
+          <div><div class="kicker">ROSE E CREDITI</div><h2>Squadre</h2></div>
+          <button id="newTeamBtn" class="admin-only">+ Nuova squadra</button>
+        </div>
+        <div id="teamList" class="cards"></div>
+      </section>
+
+      <section id="tab-auctions" class="tab">
+        <div class="section-head">
+          <div><div class="kicker">MERCATO</div><h2>Aste a buste</h2></div>
+          <button id="newAuctionBtn" class="admin-only">+ Nuova asta</button>
+        </div>
+        <div class="toolbar">
+          <select id="auctionFilter">
+            <option value="all">Tutte le aste</option>
+            <option value="open">Aperte</option>
+            <option value="closed">Chiuse</option>
+          </select>
+        </div>
+        <div id="auctionList" class="cards"></div>
+      </section>
+
+      <section id="tab-calendar" class="tab">
+        <div class="section-head">
+          <div><div class="kicker">CAMPIONATO</div><h2>Calendario e risultati</h2></div>
+          <div class="button-row admin-only">
+            <button id="generateCalendarBtn" class="secondary">Genera calendario</button>
+            <button id="newMatchBtn">+ Partita</button>
+          </div>
+        </div>
+
+        <div class="stats-grid compact">
+          <article class="stat"><span>Partite totali</span><strong id="matchTotal">0</strong></article>
+          <article class="stat"><span>Da giocare</span><strong id="matchPending">0</strong></article>
+          <article class="stat"><span>Giocate</span><strong id="matchPlayed">0</strong></article>
+        </div>
+
+        <div class="toolbar calendar-toolbar">
+          <select id="matchdayFilter"><option value="all">Tutte le giornate</option></select>
+          <select id="matchStatusFilter">
+            <option value="all">Tutte</option>
+            <option value="pending">Da giocare</option>
+            <option value="played">Giocate</option>
+          </select>
+        </div>
+
+        <div id="calendarList"></div>
+      </section>
+
+      <section id="tab-standings" class="tab">
+        <div class="section-head">
+          <div><div class="kicker">CLASSIFICA</div><h2>Graduatoria automatica</h2></div>
+          <button id="exportStandingsBtn" class="secondary">Esporta CSV</button>
+        </div>
+        <div class="table-wrap">
+          <table class="standings-table">
+            <thead>
+              <tr>
+                <th>#</th><th>Squadra</th><th>PG</th><th>V</th><th>N</th><th>P</th>
+                <th>GF</th><th>GS</th><th>DR</th><th>PT</th>
+              </tr>
+            </thead>
+            <tbody id="standingsBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="tab-statistics" class="tab">
+        <div class="section-head">
+          <div><div class="kicker">STATISTICHE</div><h2>Analisi del campionato</h2></div>
+        </div>
+        <div class="stats-grid">
+          <article class="stat"><span>Gol totali</span><strong id="statsGoals">0</strong></article>
+          <article class="stat"><span>Media gol</span><strong id="statsGoalAverage">0</strong></article>
+          <article class="stat"><span>Vittorie in casa</span><strong id="statsHomeWins">0</strong></article>
+          <article class="stat"><span>Pareggi</span><strong id="statsDraws">0</strong></article>
+        </div>
+        <div class="dashboard-grid">
+          <section class="panel"><h3>Miglior attacco</h3><div id="bestAttack"></div></section>
+          <section class="panel"><h3>Miglior difesa</h3><div id="bestDefense"></div></section>
+          <section class="panel"><h3>Partita con più gol</h3><div id="highestScoringMatch"></div></section>
+          <section class="panel"><h3>Economia della lega</h3><div id="leagueEconomy"></div></section>
+        </div>
+      </section>
+
+      <section id="tab-rosters" class="tab">
+        <div class="section-head">
+          <div><div class="kicker">ROSE</div><h2>Giocatori</h2></div>
+          <button id="newRosterPlayerBtn" class="admin-only">+ Aggiungi giocatore</button>
+        </div>
+        <div id="rosterList" class="cards"></div>
+      </section>
+
+      <section id="tab-market" class="tab">
+        <div class="section-head">
+          <div><div class="kicker">MERCATO</div><h2>Operazioni e storico</h2></div>
+          <button id="newMarketMoveBtn" class="admin-only">+ Nuova operazione</button>
+        </div>
+
+        <div class="stats-grid compact">
+          <article class="stat"><span>Operazioni</span><strong id="marketMoveCount">0</strong></article>
+          <article class="stat"><span>Crediti movimentati</span><strong id="marketCreditTotal">0</strong></article>
+          <article class="stat"><span>Giocatori in rosa</span><strong id="marketRosterCount">0</strong></article>
+        </div>
+
+        <div id="marketHistory" class="cards"></div>
+      </section>
+
+      <section id="tab-documents" class="tab">
+        <div class="section-head">
+          <div><div class="kicker">ARCHIVIO</div><h2>Documenti</h2></div>
+          <button id="newDocumentBtn" class="admin-only">+ Aggiungi link</button>
+        </div>
+        <div id="documentList" class="cards"></div>
+      </section>
+
+      <section id="tab-members" class="tab">
+        <div class="section-head">
+          <div><div class="kicker">UTENTI</div><h2>Partecipanti al campionato</h2></div>
+          <button id="newMemberBtn2" class="admin-only">+ Aggiungi utente</button>
+        </div>
+        <div id="memberList" class="cards"></div>
+      </section>
+
+      <section id="tab-settings" class="tab">
+        
+        <section class="panel">
+          <div class="section-head">
+            <div><div class="kicker">BACKUP</div><h3>Esporta e ripristina dati</h3></div>
+          </div>
+          <p class="meta">Il backup contiene i dati della lega selezionata in formato JSON.</p>
+          <div class="button-row">
+            <button id="exportBackupBtn">Esporta backup</button>
+            <button id="importBackupBtn" class="secondary admin-only">Importa backup</button>
+            <input id="backupFileInput" type="file" accept="application/json,.json" hidden>
+          </div>
+          <div id="backupStatus" class="meta"></div>
+        </section>
+
+        
+        <section class="panel">
+          <div class="section-head">
+            <div><div class="kicker">RELEASE CANDIDATE</div><h3>Stato del controllo RC1</h3></div>
+          </div>
+          <div class="diagnostics-list">
+            <div class="diagnostic-row ok"><strong>✓ Struttura HTML</strong><span>ID univoci e dialoghi coerenti</span></div>
+            <div class="diagnostic-row ok"><strong>✓ JavaScript</strong><span>Handler duplicati rimossi e riferimenti DOM verificati</span></div>
+            <div class="diagnostic-row ok"><strong>✓ Moduli principali</strong><span>Aste, calendario, classifica e mercato ripristinati nel rendering</span></div>
+            <div class="diagnostic-row ok"><strong>✓ PWA</strong><span>Manifest, icone e service worker presenti</span></div>
+            <div class="diagnostic-row error"><strong>! Collaudo reale</strong><span>Da eseguire sul progetto Supabase e su iPhone</span></div>
+          </div>
+        </section>
+
+        <section class="panel diagnostics-panel">
+          <div class="section-head">
+            <div><div class="kicker">DIAGNOSTICA</div><h3>Controllo configurazione</h3></div>
+            <button id="runDiagnosticsBtn" class="secondary">Esegui controllo</button>
+          </div>
+          <div id="diagnosticsList" class="diagnostics-list">
+            <div class="meta">Premi “Esegui controllo” per verificare collegamento, dati e permessi.</div>
+          </div>
+        </section>
+
+        <div class="section-head">
+          <div><div class="kicker">GESTIONE</div><h2>Impostazioni</h2></div>
+          <div class="head-actions">
+            <button id="newMemberBtn" class="admin-only secondary">+ Utente</button>
+            <button id="newLeagueBtn">+ Nuovo campionato</button>
+          </div>
+        </div>
+        <article class="panel">
+          <h3>Ruolo nel campionato selezionato</h3>
+          <p id="roleDescription">—</p>
+        </article>
+        <article class="panel admin-only">
+          <h3>Regole principali</h3>
+          <form id="leagueSettingsForm" class="form-grid">
+            <label>Nome<input id="settingsName" required></label>
+            <label>Crediti iniziali<input id="settingsCredits" type="number" min="1" required></label>
+            <label>Giocatori massimi<input id="settingsMaxPlayers" type="number" min="1" required></label>
+            <label>Punti vittoria<input id="settingsWinPoints" type="number" min="0" required></label>
+            <button type="submit">Salva impostazioni</button>
+          </form>
+        </article>
+      </section>
+    </section>
+  </main>
+    <nav class="mobile-bottom-nav" aria-label="Navigazione rapida">
+      <button data-mobile-tab="dashboard">Home</button>
+      <button data-mobile-tab="teams">Squadre</button>
+      <button data-mobile-tab="auctions">Aste</button>
+      <button data-mobile-tab="calendar">Partite</button>
+      <button data-mobile-tab="market">Mercato</button>
+    </nav>
+
+  <dialog id="leagueDialog"><form id="leagueForm" method="dialog">
+    <h3>Nuovo campionato</h3>
+    <label>Nome<input id="leagueName" required placeholder="Serie A Manageriale"></label>
+    <div class="form-grid two">
+      <label>Crediti iniziali<input id="startingCredits" type="number" min="1" value="500" required></label>
+      <label>Rosa massima<input id="maxPlayers" type="number" min="1" value="25" required></label>
+    </div>
+    <div class="dialog-actions"><button value="cancel" class="secondary">Annulla</button><button id="saveLeagueBtn" value="default">Crea</button></div>
+  </form></dialog>
+
+  <dialog id="teamDialog"><form id="teamForm" method="dialog">
+    <h3>Nuova squadra</h3>
+    <label>Nome squadra<input id="teamName" required placeholder="Milan"></label>
+    <label>Nome allenatore<input id="coachName" placeholder="Giorgio"></label>
+    <div class="dialog-actions"><button value="cancel" class="secondary">Annulla</button><button value="default">Crea</button></div>
+  </form></dialog>
+
+  <dialog id="auctionDialog"><form id="auctionForm" method="dialog">
+    <h3>Nuova asta a buste chiuse</h3>
+    <label>Giocatore<input id="auctionPlayer" required placeholder="Nome giocatore"></label>
+    <div class="form-grid two">
+      <label>Ruolo<input id="auctionRole" placeholder="DC, CC, ATT..."></label>
+      <label>Offerta minima<input id="auctionMinBid" type="number" min="0" value="1" required></label>
+    </div>
+    <label>Scadenza<input id="auctionDeadline" type="datetime-local" required></label>
+    <label>Note<textarea id="auctionNotes" rows="3" placeholder="Facoltative"></textarea></label>
+    <div class="dialog-actions"><button value="cancel" class="secondary">Annulla</button><button value="default">Crea asta</button></div>
+  </form></dialog>
+
+  <dialog id="bidDialog"><form id="bidForm" method="dialog">
+    <h3>Invia offerta</h3>
+    <p id="bidAuctionTitle" class="meta"></p>
+    <label>Squadra<select id="bidTeam" required></select></label>
+    <label>Crediti offerti<input id="bidAmount" type="number" min="1" required></label>
+    <div class="dialog-actions"><button value="cancel" class="secondary">Annulla</button><button value="default">Invia offerta</button></div>
+  </form></dialog>
+
+  <dialog id="auctionResultDialog"><form method="dialog">
+    <h3>Esito asta</h3>
+    <div id="auctionResultBody"></div>
+    <div class="dialog-actions"><button value="default">Chiudi</button></div>
+  </form></dialog>
+
+
+  <dialog id="rosterDialog"><form id="rosterForm" method="dialog">
+    <h3>Aggiungi giocatore alla rosa</h3>
+    <label>Squadra<select id="rosterTeam" required></select></label>
+    <label>Nome giocatore<input id="rosterPlayerName" required placeholder="Nome giocatore"></label>
+    <label>Ruolo<input id="rosterRole" placeholder="DC, CC, ATT..."></label>
+    <label>Prezzo acquisto<input id="rosterPrice" type="number" min="0" value="0" required></label>
+    <div class="dialog-actions"><button value="cancel" class="secondary">Annulla</button><button value="default">Aggiungi</button></div>
+  </form></dialog>
+
+  <dialog id="memberDialog"><form id="memberForm" method="dialog">
+    <h3>Aggiungi amministratore o allenatore</h3>
+    <label>Email<input id="memberEmail" type="email" required placeholder="utente@email.it"></label>
+    <label>Ruolo<select id="memberRole"><option value="admin">Amministratore</option><option value="coach">Allenatore</option><option value="viewer">Spettatore</option></select></label>
+    <div class="dialog-actions"><button value="cancel" class="secondary">Annulla</button><button value="default">Aggiungi</button></div>
+  </form></dialog>
+
+  <dialog id="matchDialog"><form id="matchForm" method="dialog">
+    <h3>Partita</h3>
+    <div class="form-grid two">
+      <label>Giornata<input id="matchday" type="number" min="1" required></label>
+      <label>Data e ora<input id="matchDate" type="datetime-local"></label>
+    </div>
+    <label>Squadra di casa<select id="homeTeam" required></select></label>
+    <label>Squadra ospite<select id="awayTeam" required></select></label>
+    <div class="form-grid two">
+      <label>Gol casa<input id="homeScore" type="number" min="0" placeholder="-"></label>
+      <label>Gol ospite<input id="awayScore" type="number" min="0" placeholder="-"></label>
+    </div>
+    <label>Note<textarea id="matchNotes" rows="3" placeholder="Facoltative"></textarea></label>
+    <input id="editingMatchId" type="hidden">
+    <div class="dialog-actions"><button value="cancel" class="secondary">Annulla</button><button value="default">Salva</button></div>
+  </form></dialog>
+
+  <dialog id="calendarGeneratorDialog"><form id="calendarGeneratorForm" method="dialog">
+    <h3>Genera calendario</h3>
+    <label>Formula
+      <select id="calendarFormat">
+        <option value="single">Girone unico, sola andata</option>
+        <option value="double">Andata e ritorno</option>
+      </select>
+    </label>
+    <label>Data della prima giornata<input id="calendarStartDate" type="date" required></label>
+    <label>Intervallo tra le giornate
+      <select id="calendarInterval">
+        <option value="7">7 giorni</option>
+        <option value="14">14 giorni</option>
+      </select>
+    </label>
+    <p class="meta">La generazione è consentita solo se non esistono già partite.</p>
+    <div class="dialog-actions"><button value="cancel" class="secondary">Annulla</button><button value="default">Genera</button></div>
+  </form></dialog>
+
+  <dialog id="marketDialog"><form id="marketForm" method="dialog">
+    <h3>Nuova operazione di mercato</h3>
+    <label>Tipo
+      <select id="marketType" required>
+        <option value="purchase">Acquisto</option>
+        <option value="sale">Vendita</option>
+        <option value="release">Svincolo</option>
+        <option value="transfer">Trasferimento</option>
+      </select>
+    </label>
+    <label>Squadra di partenza<select id="marketFromTeam"></select></label>
+    <label>Squadra di destinazione<select id="marketToTeam"></select></label>
+    <label>Giocatore
+      <select id="marketRosterPlayer"></select>
+      <input id="marketNewPlayerName" placeholder="Oppure nuovo giocatore">
+    </label>
+    <div class="form-grid two">
+      <label>Ruolo<input id="marketPlayerRole" placeholder="DC, CC, ATT..."></label>
+      <label>Crediti<input id="marketCredits" type="number" min="0" value="0" required></label>
+    </div>
+    <label>Note<textarea id="marketNotes" rows="3" placeholder="Facoltative"></textarea></label>
+    <div class="dialog-actions"><button value="cancel" class="secondary">Annulla</button><button value="default">Registra</button></div>
+  </form></dialog>
+
+  <dialog id="documentDialog"><form id="documentForm" method="dialog">
+    <h3>Aggiungi documento</h3>
+    <label>Titolo<input id="documentTitle" required placeholder="Regolamento ufficiale"></label>
+    <label>Link<input id="documentUrl" type="url" required placeholder="https://..."></label>
+    <label>Categoria<select id="documentCategory"><option>Regolamento</option><option>Calendario</option><option>Comunicato</option><option>Altro</option></select></label>
+    <div class="dialog-actions"><button value="cancel" class="secondary">Annulla</button><button value="default">Salva</button></div>
+  </form></dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js"));
+    }
+  </script>
+
+  <dialog id="importBackupDialog"><form id="importBackupForm" method="dialog">
+    <h3>Importa backup</h3>
+    <div id="importBackupSummary" class="card"></div>
+    <label class="checkbox-row">
+      <input id="confirmBackupImport" type="checkbox" required>
+      Confermo di voler aggiungere questi dati alla lega selezionata
+    </label>
+    <p class="meta">L'importazione non elimina automaticamente i dati già presenti.</p>
+    <div class="dialog-actions">
+      <button value="cancel" class="secondary">Annulla</button>
+      <button value="default">Importa</button>
+    </div>
+  </form></dialog>
+
+</body>
+</html>
